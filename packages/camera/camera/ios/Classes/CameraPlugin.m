@@ -366,11 +366,27 @@ NSString *const errorMethod = @"error";
   _dispatchQueue = dispatchQueue;
   _captureSession = [[AVCaptureSession alloc] init];
   _captureDevice = [AVCaptureDevice deviceWithUniqueID:cameraName];
+  NSLog(@"Frame Rate %f %f", _captureDevice.activeFormat.videoSupportedFrameRateRanges.firstObject.minFrameRate, _captureDevice.activeFormat.videoSupportedFrameRateRanges.firstObject.maxFrameRate);
+      @try {
+          if ([_captureDevice position] == AVCaptureDevicePositionFront) {
+              [_captureDevice lockForConfiguration:nil];
+              _captureDevice.activeVideoMinFrameDuration = CMTimeMake(30, 60);
+              [_captureDevice unlockForConfiguration];
+          }
+          else {
+              [_captureDevice lockForConfiguration:nil];
+              _captureDevice.activeVideoMinFrameDuration = CMTimeMake(5, 30);
+              [_captureDevice unlockForConfiguration];
+          }
+      } @catch (NSError *e) {
+
+          }
+      NSLog(@"Frame Rate New %f %f", _captureDevice.activeFormat.videoSupportedFrameRateRanges.firstObject.minFrameRate, _captureDevice.activeFormat.videoSupportedFrameRateRanges.firstObject.maxFrameRate);
   _flashMode = _captureDevice.hasFlash ? FlashModeAuto : FlashModeOff;
   _exposureMode = ExposureModeAuto;
   _focusMode = FocusModeAuto;
   _lockedCaptureOrientation = UIDeviceOrientationUnknown;
-  _deviceOrientation = orientation;
+  _deviceOrientation = UIDeviceOrientationPortrait;
 
   NSError *localError = nil;
   _captureVideoInput = [AVCaptureDeviceInput deviceInputWithDevice:_captureDevice
@@ -1311,7 +1327,7 @@ NSString *const errorMethod = @"error";
   _registry = registry;
   _messenger = messenger;
   [self initDeviceEventMethodChannel];
-  [self startOrientationListener];
+//  [self startOrientationListener];
   return self;
 }
 
@@ -1342,7 +1358,7 @@ NSString *const errorMethod = @"error";
     [_camera setDeviceOrientation:orientation];
   }
 
-  [self sendDeviceOrientation:orientation];
+//  [self sendDeviceOrientation:orientation];
 }
 
 - (void)sendDeviceOrientation:(UIDeviceOrientation)orientation {
@@ -1458,7 +1474,7 @@ NSString *const errorMethod = @"error";
                    @([_camera.captureDevice isExposurePointOfInterestSupported]),
                @"focusPointSupported" : @([_camera.captureDevice isFocusPointOfInterestSupported]),
              }];
-      [self sendDeviceOrientation:[UIDevice currentDevice].orientation];
+//      [self sendDeviceOrientation:[UIDevice currentDevice].orientation];
       [_camera start];
       [result sendSuccess];
     } else if ([@"takePicture" isEqualToString:call.method]) {
