@@ -1221,7 +1221,7 @@ NSString *const errorMethod = @"error";
   }
 
   _videoWriter = [[AVAssetWriter alloc] initWithURL:outputURL
-                                           fileType:AVFileTypeMPEG4
+                                           fileType:AVFileTypeQuickTimeMovie
                                               error:&error];
   NSParameterAssert(_videoWriter);
   if (error) {
@@ -1230,7 +1230,7 @@ NSString *const errorMethod = @"error";
   }
 
   NSDictionary *videoSettings = [_captureVideoOutput
-      recommendedVideoSettingsForAssetWriterWithOutputFileType:AVFileTypeMPEG4];
+      recommendedVideoSettingsForAssetWriterWithOutputFileType:AVFileTypeQuickTimeMovie];
   _videoWriterInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo
                                                          outputSettings:videoSettings];
 
@@ -1273,7 +1273,7 @@ NSString *const errorMethod = @"error";
     [self.captureDevice unlockForConfiguration];
   }
 
-  
+
 
   return YES;
 }
